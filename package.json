@@ -1,6 +1,6 @@
 {
   "name": "voxel-voila",
-  "description": "",
+  "description": "show name of block highlighted at cursor (voxel.js plugin)",
   "version": "0.0.1",
   "repository": {
     "type": "git",
