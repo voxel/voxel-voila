@@ -45,6 +45,7 @@ visibility: hidden;\
 top: 0px;\
 left: 50%;\
 color: white;\
+font-size: 18pt;\
 ');
       this.node.textContent = '';
       return document.body.appendChild(this.node);
@@ -53,16 +54,20 @@ color: white;\
     VoilaPlugin.prototype.enable = function() {
       var _this = this;
       this.node.style.visibility = '';
-      return this.hl.on('highlight', this.onHighlight = function(pos) {
+      this.hl.on('highlight', this.onHighlight = function(pos) {
         var blockID, blockName;
         blockID = _this.game.getBlock(pos);
         blockName = _this.registry.getBlockName(blockID);
         return _this.node.textContent = "" + blockName + " (" + blockID + ")";
       });
+      return this.hl.on('remove', this.onRemove = function() {
+        return _this.node.textContent = '';
+      });
     };
 
     VoilaPlugin.prototype.disable = function() {
       this.hl.removeListener('highlight', this.onHighlight);
+      this.hl.removeListener('remove', this.onRemove);
       return this.node.style.visibility = 'hidden';
     };
 

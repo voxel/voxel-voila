@@ -24,6 +24,7 @@ visibility: hidden;
 top: 0px;
 left: 50%;
 color: white;
+font-size: 18pt;
 '
     @node.textContent = ''
 
@@ -38,7 +39,11 @@ color: white;
 
       @node.textContent = "#{blockName} (#{blockID})"
 
+    @hl.on 'remove', @onRemove = () =>
+      @node.textContent = ''
+
   disable: () ->
     @hl.removeListener 'highlight', @onHighlight
+    @hl.removeListener 'remove', @onRemove
     @node.style.visibility = 'hidden'
 
