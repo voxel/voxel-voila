@@ -7,12 +7,12 @@
   };
 
   module.exports.pluginInfo = {
-    loadAfter: ['voxel-highlight']
+    loadAfter: ['voxel-highlight', 'voxel-registry']
   };
 
   VoilaPlugin = (function() {
     function VoilaPlugin(game, opts) {
-      var _ref;
+      var _ref, _ref1;
       this.game = game;
       this.hl = (function() {
         var _ref1;
@@ -22,13 +22,24 @@
           throw 'voxel-voila requires voxel-highlight plugin';
         }
       }).call(this);
+      this.registry = (function() {
+        var _ref2;
+        if ((_ref1 = (_ref2 = this.game.plugins) != null ? _ref2.get('voxel-registry') : void 0) != null) {
+          return _ref1;
+        } else {
+          throw 'voxel-voila requires voxel-registry plugin';
+        }
+      }).call(this);
       this.enable();
     }
 
     VoilaPlugin.prototype.enable = function() {
       var _this = this;
       return this.hl.on('highlight', this.onHighlight = function(pos) {
-        return console.log('hl', pos);
+        var blockID, blockName;
+        blockID = _this.game.getBlock(pos);
+        blockName = _this.registry.getBlockName(blockID);
+        return console.log(blockName);
       });
     };
 
