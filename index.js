@@ -30,21 +30,40 @@
           throw 'voxel-voila requires voxel-registry plugin';
         }
       }).call(this);
+      this.createNode();
       this.enable();
     }
 
+    VoilaPlugin.prototype.createNode = function() {
+      this.node = document.createElement('div');
+      this.node.setAttribute('id', 'voxel-voila');
+      this.node.setAttribute('style', '\
+border: 1px solid black;\
+background-image: linear-gradient(rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.6) 100%);\
+position: absolute;\
+visibility: hidden;\
+top: 0px;\
+left: 50%;\
+color: white;\
+');
+      this.node.textContent = '';
+      return document.body.appendChild(this.node);
+    };
+
     VoilaPlugin.prototype.enable = function() {
       var _this = this;
+      this.node.style.visibility = '';
       return this.hl.on('highlight', this.onHighlight = function(pos) {
         var blockID, blockName;
         blockID = _this.game.getBlock(pos);
         blockName = _this.registry.getBlockName(blockID);
-        return console.log(blockName);
+        return _this.node.textContent = "" + blockName + " (" + blockID + ")";
       });
     };
 
     VoilaPlugin.prototype.disable = function() {
-      return this.hl.removeListener('highlight', this.onHighlight);
+      this.hl.removeListener('highlight', this.onHighlight);
+      return this.node.style.visibility = 'hidden';
     };
 
     return VoilaPlugin;
