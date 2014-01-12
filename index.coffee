@@ -40,7 +40,12 @@ font-size: 18pt;
 
       displayName = @registry.getItemDisplayName(name)
 
-      @node.textContent = "#{displayName} (#{name}/#{id})"  # TODO: by default, only show displayName but have debug option for more
+      if @game.buttons.crouch
+        # more detailed info when crouching
+        # TODO: edge-trigger, too, .down.on, .up.on to hide/show even if not retargetting block
+        @node.textContent = "#{displayName} (#{name}/#{id})"
+      else
+        @node.textContent = displayName
 
     @hl.on 'remove', @onRemove = () =>
       @node.textContent = ''

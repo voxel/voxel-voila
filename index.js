@@ -62,7 +62,11 @@ font-size: 18pt;\
         id = _this.game.getBlock(pos);
         name = _this.registry.getBlockName(id);
         displayName = _this.registry.getItemDisplayName(name);
-        return _this.node.textContent = "" + displayName + " (" + name + "/" + id + ")";
+        if (_this.game.buttons.crouch) {
+          return _this.node.textContent = "" + displayName + " (" + name + "/" + id + ")";
+        } else {
+          return _this.node.textContent = displayName;
+        }
       });
       return this.hl.on('remove', this.onRemove = function() {
         return _this.node.textContent = '';
