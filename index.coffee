@@ -2,12 +2,13 @@
 module.exports = (game, opts) -> new VoilaPlugin(game, opts)
 
 module.exports.pluginInfo =
-  loadAfter: ['voxel-highlight', 'voxel-registry']
+  loadAfter: ['voxel-highlight', 'voxel-registry', 'voxel-registry']
 
 class VoilaPlugin
   constructor: (@game, opts) ->
     @hl = @game.plugins?.get('voxel-highlight') ? throw 'voxel-voila requires voxel-highlight plugin'
     @registry = @game.plugins?.get('voxel-registry') ? throw 'voxel-voila requires voxel-registry plugin'
+    throw 'voxel-voila requires voxel-registry >=0.2.0 with getItemDisplayName' if not @registry.getItemDisplayName?
 
     @createNode()
 
@@ -34,10 +35,12 @@ font-size: 18pt;
     @node.style.visibility = ''
 
     @hl.on 'highlight', @onHighlight = (pos) =>
-      blockID = @game.getBlock(pos)
-      blockName = @registry.getBlockName(blockID)
+      id = @game.getBlock(pos)
+      name = @registry.getBlockName(id)
 
-      @node.textContent = "#{blockName} (#{blockID})"
+      displayName = @registry.getItemDisplayName(name)
+
+      @node.textContent = "#{displayName} (#{name}/#{id})"  # TODO: by default, only show displayName but have debug option for more
 
     @hl.on 'remove', @onRemove = () =>
       @node.textContent = ''

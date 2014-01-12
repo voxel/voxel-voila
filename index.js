@@ -7,7 +7,7 @@
   };
 
   module.exports.pluginInfo = {
-    loadAfter: ['voxel-highlight', 'voxel-registry']
+    loadAfter: ['voxel-highlight', 'voxel-registry', 'voxel-registry']
   };
 
   VoilaPlugin = (function() {
@@ -30,6 +30,9 @@
           throw 'voxel-voila requires voxel-registry plugin';
         }
       }).call(this);
+      if (this.registry.getItemDisplayName == null) {
+        throw 'voxel-voila requires voxel-registry >=0.2.0 with getItemDisplayName';
+      }
       this.createNode();
       this.enable();
     }
@@ -55,10 +58,11 @@ font-size: 18pt;\
       var _this = this;
       this.node.style.visibility = '';
       this.hl.on('highlight', this.onHighlight = function(pos) {
-        var blockID, blockName;
-        blockID = _this.game.getBlock(pos);
-        blockName = _this.registry.getBlockName(blockID);
-        return _this.node.textContent = "" + blockName + " (" + blockID + ")";
+        var displayName, id, name;
+        id = _this.game.getBlock(pos);
+        name = _this.registry.getBlockName(id);
+        displayName = _this.registry.getItemDisplayName(name);
+        return _this.node.textContent = "" + displayName + " (" + name + "/" + id + ")";
       });
       return this.hl.on('remove', this.onRemove = function() {
         return _this.node.textContent = '';
