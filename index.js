@@ -7,12 +7,12 @@
   };
 
   module.exports.pluginInfo = {
-    loadAfter: ['voxel-highlight', 'voxel-registry', 'voxel-registry']
+    loadAfter: ['voxel-highlight', 'voxel-registry', 'voxel-registry', 'voxel-blockdata']
   };
 
   VoilaPlugin = (function() {
     function VoilaPlugin(game, opts) {
-      var _ref, _ref1;
+      var _ref, _ref1, _ref2;
       this.game = game;
       this.hl = (function() {
         var _ref1;
@@ -33,6 +33,7 @@
       if (this.registry.getItemDisplayName == null) {
         throw 'voxel-voila requires voxel-registry >=0.2.0 with getItemDisplayName';
       }
+      this.blockdata = (_ref2 = this.game.plugins) != null ? _ref2.get('voxel-blockdata') : void 0;
       this.createNode();
       this.enable();
     }
@@ -58,12 +59,23 @@ font-size: 18pt;\
       var _this = this;
       this.node.style.visibility = '';
       this.hl.on('highlight', this.onHighlight = function(pos) {
-        var displayName, id, name;
+        var bd, displayName, extra, id, name;
         id = _this.game.getBlock(pos);
         name = _this.registry.getBlockName(id);
         displayName = _this.registry.getItemDisplayName(name);
         if (_this.game.buttons.crouch) {
-          return _this.node.textContent = "" + displayName + " (" + name + "/" + id + ")";
+          if (_this.blockdata != null) {
+            bd = _this.blockdata.get(pos[0], pos[1], pos[2]);
+            if (bd != null) {
+              extra = "BD(" + pos[0] + "," + pos[1] + "," + pos[2] + "): " + (JSON.stringify(bd));
+              window.status = extra;
+              console.log(extra);
+              extra = '+';
+            } else {
+              extra = '';
+            }
+          }
+          return _this.node.textContent = "" + displayName + " (" + name + "/" + id + ")" + extra;
         } else {
           return _this.node.textContent = displayName;
         }
