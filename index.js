@@ -14,6 +14,9 @@
     function VoilaPlugin(game, opts) {
       var _ref, _ref1, _ref2;
       this.game = game;
+      if (!this.game.isClient) {
+        return;
+      }
       this.hl = (function() {
         var _ref1;
         if ((_ref = (_ref1 = this.game.plugins) != null ? _ref1.get('voxel-highlight') : void 0) != null) {
