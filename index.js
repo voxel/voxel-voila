@@ -60,30 +60,41 @@ font-size: 18pt;\
       var _this = this;
       this.node.style.visibility = '';
       this.hl.on('highlight', this.onHighlight = function(pos) {
-        var bd, displayName, extra, id, name;
-        id = _this.game.getBlock(pos);
-        name = _this.registry.getBlockName(id);
-        displayName = _this.registry.getItemDisplayName(name);
-        if (_this.game.buttons.crouch) {
-          if (_this.blockdata != null) {
-            bd = _this.blockdata.get(pos[0], pos[1], pos[2]);
-            if (bd != null) {
-              extra = "BD(" + pos[0] + "," + pos[1] + "," + pos[2] + "): " + (JSON.stringify(bd));
-              window.status = extra;
-              console.log(extra);
-              extra = '+';
-            } else {
-              extra = '';
-            }
-          }
-          return _this.node.textContent = "" + displayName + " (" + name + "/" + id + ")" + extra;
-        } else {
-          return _this.node.textContent = displayName;
-        }
+        return _this.update(pos);
       });
       return this.hl.on('remove', this.onRemove = function() {
-        return _this.node.textContent = '';
+        return _this.clear();
       });
+    };
+
+    VoilaPlugin.prototype.update = function(pos) {
+      var bd, displayName, extra, id, name, x, y, z;
+      this.lastPos = pos;
+      id = this.game.getBlock(pos);
+      name = this.registry.getBlockName(id);
+      displayName = this.registry.getItemDisplayName(name);
+      if (this.game.buttons.crouch) {
+        if (this.blockdata != null) {
+          x = pos[0], y = pos[1], z = pos[2];
+          bd = this.blockdata.get(x, y, z);
+          if (bd != null) {
+            extra = "BD(" + x + "," + y + "," + y + "): " + (JSON.stringify(bd));
+            window.status = extra;
+            console.log(extra);
+            extra = '+';
+          } else {
+            extra = '';
+          }
+        }
+        return this.node.textContent = "" + displayName + " (" + name + "/" + id + ")" + extra;
+      } else {
+        return this.node.textContent = displayName;
+      }
+    };
+
+    VoilaPlugin.prototype.clear = function() {
+      this.lastPos = void 0;
+      return this.node.textContent = '';
     };
 
     VoilaPlugin.prototype.disable = function() {

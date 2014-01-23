@@ -37,34 +37,43 @@ font-size: 18pt;
     @node.style.visibility = ''
 
     @hl.on 'highlight', @onHighlight = (pos) =>
-      id = @game.getBlock(pos)
-      name = @registry.getBlockName(id)
-
-      displayName = @registry.getItemDisplayName(name)
-
-      if @game.buttons.crouch
-        # more detailed info when crouching
-        # TODO: edge-trigger, too, .down.on, .up.on to hide/show even if not retargetting block
-
-        if @blockdata?
-          # optional attached arbitrary block data
-          bd = @blockdata.get(pos[0], pos[1], pos[2])
-          if bd?
-            # TODO: show this somewhere
-            extra = "BD(#{pos[0]},#{pos[1]},#{pos[2]}): #{JSON.stringify(bd)}"
-            window.status = extra
-            console.log(extra)
-
-            extra = '+'
-          else
-            extra = ''
-        
-        @node.textContent = "#{displayName} (#{name}/#{id})#{extra}"
-      else
-        @node.textContent = displayName
+      @update(pos)
 
     @hl.on 'remove', @onRemove = () =>
-      @node.textContent = ''
+      @clear()
+
+  update: (pos) ->
+    @lastPos = pos
+    id = @game.getBlock(pos)
+    name = @registry.getBlockName(id)
+
+    displayName = @registry.getItemDisplayName(name)
+
+    if @game.buttons.crouch
+      # more detailed info when crouching
+      # TODO: edge-trigger, too, .down.on, .up.on to hide/show even if not retargetting block
+
+      if @blockdata?
+        # optional attached arbitrary block data
+        [x, y, z] = pos
+        bd = @blockdata.get(x, y, z)
+        if bd?
+          # TODO: show this somewhere
+          extra = "BD(#{x},#{y},#{y}): #{JSON.stringify(bd)}"
+          window.status = extra
+          console.log(extra)
+
+          extra = '+'
+        else
+          extra = ''
+      
+      @node.textContent = "#{displayName} (#{name}/#{id})#{extra}"
+    else
+      @node.textContent = displayName
+
+  clear: () ->
+    @lastPos = undefined
+    @node.textContent = ''
 
   disable: () ->
     @hl.removeListener 'highlight', @onHighlight
