@@ -33,15 +33,6 @@ font-size: 18pt;
 
     document.body.appendChild(@node)
 
-  enable: () ->
-    @node.style.visibility = ''
-
-    @hl.on 'highlight', @onHighlight = (pos) =>
-      @update(pos)
-
-    @hl.on 'remove', @onRemove = () =>
-      @clear()
-
   update: (pos) ->
     @lastPos = pos
     id = @game.getBlock(pos)
@@ -51,7 +42,6 @@ font-size: 18pt;
 
     if @game.buttons.crouch
       # more detailed info when crouching
-      # TODO: edge-trigger, too, .down.on, .up.on to hide/show even if not retargetting block
 
       if @blockdata?
         # optional attached arbitrary block data
@@ -75,8 +65,23 @@ font-size: 18pt;
     @lastPos = undefined
     @node.textContent = ''
 
+  enable: () ->
+    @node.style.visibility = ''
+
+    @hl.on 'highlight', @onHighlight = (pos) =>
+      @update(pos)
+
+    @hl.on 'remove', @onRemove = () =>
+      @clear()
+
+    if @game.buttons.changed? # available in kb-bindings >=0.2.0
+      @game.buttons.changed.on 'crouch', @onChanged = () =>
+        @update(@lastPos)
+
+
   disable: () ->
     @hl.removeListener 'highlight', @onHighlight
     @hl.removeListener 'remove', @onRemove
+    @game.buttons.changed.removeListener 'crouch', @onChanged if @game.buttons.changed?
     @node.style.visibility = 'hidden'
 

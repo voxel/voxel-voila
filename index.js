@@ -56,17 +56,6 @@ font-size: 18pt;\
       return document.body.appendChild(this.node);
     };
 
-    VoilaPlugin.prototype.enable = function() {
-      var _this = this;
-      this.node.style.visibility = '';
-      this.hl.on('highlight', this.onHighlight = function(pos) {
-        return _this.update(pos);
-      });
-      return this.hl.on('remove', this.onRemove = function() {
-        return _this.clear();
-      });
-    };
-
     VoilaPlugin.prototype.update = function(pos) {
       var bd, displayName, extra, id, name, x, y, z;
       this.lastPos = pos;
@@ -97,9 +86,28 @@ font-size: 18pt;\
       return this.node.textContent = '';
     };
 
+    VoilaPlugin.prototype.enable = function() {
+      var _this = this;
+      this.node.style.visibility = '';
+      this.hl.on('highlight', this.onHighlight = function(pos) {
+        return _this.update(pos);
+      });
+      this.hl.on('remove', this.onRemove = function() {
+        return _this.clear();
+      });
+      if (this.game.buttons.changed != null) {
+        return this.game.buttons.changed.on('crouch', this.onChanged = function() {
+          return _this.update(_this.lastPos);
+        });
+      }
+    };
+
     VoilaPlugin.prototype.disable = function() {
       this.hl.removeListener('highlight', this.onHighlight);
       this.hl.removeListener('remove', this.onRemove);
+      if (this.game.buttons.changed != null) {
+        this.game.buttons.changed.removeListener('crouch', this.onChanged);
+      }
       return this.node.style.visibility = 'hidden';
     };
 
