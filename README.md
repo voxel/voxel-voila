@@ -2,7 +2,12 @@
 
 Show name of block highlighted at your cursor
 
-![screenshot](http://i.imgur.com/3jSiIRS.png "Screenshot")
+![screenshot](http://i.imgur.com/F5Rr6L2.png "Screenshot")
+
+Crouch (default "shift") to display more details (the internal name and block index,
+in addition to the human-readable display name):
+
+![screenshot](http://i.imgur.com/15rj0wH.png "Screenshot")
 
 Requires: 
 
