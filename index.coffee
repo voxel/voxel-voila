@@ -35,6 +35,10 @@ font-size: 18pt;
 
   update: (pos) ->
     @lastPos = pos
+    if not @lastPos?
+      @clear()
+      return
+
     id = @game.getBlock(pos)
     name = @registry.getBlockName(id)
 

@@ -50,6 +50,10 @@
     VoilaPlugin.prototype.update = function(pos) {
       var bd, displayName, extra, id, name, x, y, z;
       this.lastPos = pos;
+      if (this.lastPos == null) {
+        this.clear();
+        return;
+      }
       id = this.game.getBlock(pos);
       name = this.registry.getBlockName(id);
       displayName = this.registry.getItemDisplayName(name);
