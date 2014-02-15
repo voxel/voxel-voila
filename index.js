@@ -20,7 +20,7 @@
         if ((_ref = (_ref1 = this.game.plugins) != null ? _ref1.get('voxel-highlight') : void 0) != null) {
           return _ref;
         } else {
-          throw 'voxel-voila requires voxel-highlight plugin';
+          throw new Error('voxel-voila requires voxel-highlight plugin');
         }
       }).call(this);
       this.registry = (function() {
@@ -28,11 +28,11 @@
         if ((_ref1 = (_ref2 = this.game.plugins) != null ? _ref2.get('voxel-registry') : void 0) != null) {
           return _ref1;
         } else {
-          throw 'voxel-voila requires voxel-registry plugin';
+          throw new Error('voxel-voila requires voxel-registry plugin');
         }
       }).call(this);
       if (this.registry.getItemDisplayName == null) {
-        throw 'voxel-voila requires voxel-registry >=0.2.0 with getItemDisplayName';
+        throw new Error('voxel-voila requires voxel-registry >=0.2.0 with getItemDisplayName');
       }
       this.blockdata = (_ref2 = this.game.plugins) != null ? _ref2.get('voxel-blockdata') : void 0;
       this.createNode();
