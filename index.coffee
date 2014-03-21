@@ -17,21 +17,27 @@ class VoilaPlugin
     @enable()
 
   createNode: () ->
-    @node = document.createElement 'div'
+    @node = document.createElement 'span'
     @node.setAttribute 'id', 'voxel-voila'
     @node.setAttribute 'style', '
-border: 1px solid black;
 background-image: linear-gradient(rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.6) 100%);
-position: absolute;
 visibility: hidden;
-top: 0px;
-left: 50%;
 color: white;
 font-size: 18pt;
 '
+
     @node.textContent = ''
 
-    document.body.appendChild(@node)
+    container = document.createElement 'div'
+    container.setAttribute 'style', '
+position: absolute;
+top: 0px;
+width: 100%;
+text-align: center;
+'
+
+    container.appendChild @node
+    document.body.appendChild container
 
   update: (pos) ->
     @lastPos = pos

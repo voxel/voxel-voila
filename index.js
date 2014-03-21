@@ -40,11 +40,15 @@
     }
 
     VoilaPlugin.prototype.createNode = function() {
-      this.node = document.createElement('div');
+      var container;
+      this.node = document.createElement('span');
       this.node.setAttribute('id', 'voxel-voila');
-      this.node.setAttribute('style', 'border: 1px solid black; background-image: linear-gradient(rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.6) 100%); position: absolute; visibility: hidden; top: 0px; left: 50%; color: white; font-size: 18pt;');
+      this.node.setAttribute('style', 'background-image: linear-gradient(rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.6) 100%); visibility: hidden; color: white; font-size: 18pt;');
       this.node.textContent = '';
-      return document.body.appendChild(this.node);
+      container = document.createElement('div');
+      container.setAttribute('style', 'position: absolute; top: 0px; width: 100%; text-align: center;');
+      container.appendChild(this.node);
+      return document.body.appendChild(container);
     };
 
     VoilaPlugin.prototype.update = function(pos) {
