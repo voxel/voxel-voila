@@ -7,13 +7,13 @@
   };
 
   module.exports.pluginInfo = {
-    loadAfter: ['voxel-highlight', 'voxel-registry', 'voxel-registry', 'voxel-blockdata'],
+    loadAfter: ['voxel-highlight', 'voxel-registry', 'voxel-registry', 'voxel-blockdata', 'voxel-keys'],
     clientOnly: true
   };
 
   VoilaPlugin = (function() {
     function VoilaPlugin(game, opts) {
-      var _ref, _ref1, _ref2;
+      var _ref, _ref1, _ref2, _ref3;
       this.game = game;
       this.hl = (function() {
         var _ref1;
@@ -35,6 +35,7 @@
         throw new Error('voxel-voila requires voxel-registry >=0.2.0 with getItemDisplayName');
       }
       this.blockdata = (_ref2 = this.game.plugins) != null ? _ref2.get('voxel-blockdata') : void 0;
+      this.keys = (_ref3 = this.game.plugins) != null ? _ref3.get('voxel-keys') : void 0;
       this.createNode();
       this.enable();
     }
@@ -97,8 +98,8 @@
           return _this.clear();
         };
       })(this));
-      if (this.game.buttons.changed != null) {
-        return this.game.buttons.changed.on('crouch', this.onChanged = (function(_this) {
+      if (this.keys != null) {
+        return this.keys.changed.on('crouch', this.onChanged = (function(_this) {
           return function() {
             return _this.update(_this.lastPos);
           };
@@ -109,8 +110,8 @@
     VoilaPlugin.prototype.disable = function() {
       this.hl.removeListener('highlight', this.onHighlight);
       this.hl.removeListener('remove', this.onRemove);
-      if (this.game.buttons.changed != null) {
-        this.game.buttons.changed.removeListener('crouch', this.onChanged);
+      if (this.keys != null) {
+        this.keys.changed.removeListener('crouch', this.onChanged);
       }
       return this.node.style.visibility = 'hidden';
     };

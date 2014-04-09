@@ -2,7 +2,7 @@
 module.exports = (game, opts) -> new VoilaPlugin(game, opts)
 
 module.exports.pluginInfo =
-  loadAfter: ['voxel-highlight', 'voxel-registry', 'voxel-registry', 'voxel-blockdata']
+  loadAfter: ['voxel-highlight', 'voxel-registry', 'voxel-registry', 'voxel-blockdata', 'voxel-keys']
   clientOnly: true
 
 class VoilaPlugin
@@ -11,6 +11,7 @@ class VoilaPlugin
     @registry = @game.plugins?.get('voxel-registry') ? throw new Error('voxel-voila requires voxel-registry plugin')
     throw new Error('voxel-voila requires voxel-registry >=0.2.0 with getItemDisplayName') if not @registry.getItemDisplayName?
     @blockdata = @game.plugins?.get('voxel-blockdata')
+    @keys = @game.plugins?.get('voxel-keys') # optional
 
     @createNode()
 
@@ -50,7 +51,7 @@ text-align: center;
 
     displayName = @registry.getItemDisplayName(name)
 
-    if @game.buttons.crouch
+    if @game.buttons.crouch # TODO: voxel-keys state?
       # more detailed info when crouching
 
       if @blockdata?
@@ -84,14 +85,14 @@ text-align: center;
     @hl.on 'remove', @onRemove = () =>
       @clear()
 
-    if @game.buttons.changed? # available in kb-bindings >=0.2.0
-      @game.buttons.changed.on 'crouch', @onChanged = () =>
+    if @keys?
+      @keys.changed.on 'crouch', @onChanged = () =>
         @update(@lastPos)
 
 
   disable: () ->
     @hl.removeListener 'highlight', @onHighlight
     @hl.removeListener 'remove', @onRemove
-    @game.buttons.changed.removeListener 'crouch', @onChanged if @game.buttons.changed?
+    @keys.changed.removeListener 'crouch', @onChanged if @keys?
     @node.style.visibility = 'hidden'
 
