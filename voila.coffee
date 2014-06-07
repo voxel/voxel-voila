@@ -87,7 +87,8 @@ text-align: center;
 
     if @keys?
       @keys.changed.on 'crouch', @onChanged = () =>
-        @update(@lastPos)
+        process.nextTick () =>
+          @update(@lastPos)
 
 
   disable: () ->
