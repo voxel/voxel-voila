@@ -2,12 +2,12 @@
 module.exports = (game, opts) -> new VoilaPlugin(game, opts)
 
 module.exports.pluginInfo =
-  loadAfter: ['voxel-highlight', 'voxel-registry', 'voxel-registry', 'voxel-blockdata', 'voxel-keys']
+  loadAfter: ['voxel-highlight', 'voxel-outline', 'voxel-registry', 'voxel-registry', 'voxel-blockdata', 'voxel-keys']
   clientOnly: true
 
 class VoilaPlugin
   constructor: (@game, opts) ->
-    @hl = @game.plugins?.get('voxel-highlight') ? throw new Error('voxel-voila requires voxel-highlight plugin')
+    @hl = @game.plugins?.get('voxel-highlight') ? @game.plugins?.get('voxel-outline') ? throw new Error('voxel-voila requires voxel-highlight or voxel-outline plugins')
     @registry = @game.plugins?.get('voxel-registry') ? throw new Error('voxel-voila requires voxel-registry plugin')
     throw new Error('voxel-voila requires voxel-registry >=0.2.0 with getItemDisplayName') if not @registry.getItemDisplayName?
     @blockdata = @game.plugins?.get('voxel-blockdata')
