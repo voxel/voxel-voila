@@ -46,13 +46,22 @@ text-align: center;
       @clear()
       return
 
-    id = @game.getBlock(pos)
-    name = @registry.getBlockName(id)
+    index = @game.getBlock(pos)
+    name = @registry.getBlockName(index)
 
     displayName = @registry.getItemDisplayName(name)
 
     if @game.buttons.crouch # TODO: voxel-keys state?
       # more detailed info when crouching
+
+      @node.textContent = ""
+
+      lines = [
+        displayName,
+        '',
+        "Name: #{name}",
+        "Index: #{index}",
+      ]
 
       if @blockdata?
         # optional attached arbitrary block data
@@ -60,15 +69,11 @@ text-align: center;
         bd = @blockdata.get(x, y, z)
         if bd?
           # TODO: show this somewhere
-          extra = "BD(#{x},#{y},#{y}): #{JSON.stringify(bd)}"
-          window.status = extra
-          console.log(extra)
+          lines.push "Data: #{JSON.stringify(bd)}"
 
-          extra = '+'
-        else
-          extra = ''
-      
-      @node.textContent = "#{displayName} (#{name}/#{id})#{extra}"
+      for line in lines
+        @node.appendChild(document.createTextNode(line))
+        @node.appendChild(document.createElement('br'))
     else
       @node.textContent = displayName
 
