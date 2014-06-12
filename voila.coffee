@@ -56,16 +56,18 @@ text-align: center;
 
       @node.textContent = ""
 
+      [x, y, z] = pos
+
       lines = [
         displayName,
         '',
         "Name: #{name}",
         "Index: #{index}",
+        "Position: (#{x}, #{y}, #{z})",
       ]
 
       if @blockdata?
         # optional attached arbitrary block data
-        [x, y, z] = pos
         bd = @blockdata.get(x, y, z)
         if bd?
           # TODO: show this somewhere
