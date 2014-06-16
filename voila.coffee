@@ -66,6 +66,10 @@ text-align: center;
         "Position: (#{x}, #{y}, #{z})",
       ]
 
+      props = @registry.getBlockProps(name)
+      if props.requiredTool
+        lines.push "Requires: #{props.requiredTool}"
+
       if @blockdata?
         # optional attached arbitrary block data
         bd = @blockdata.get(x, y, z)
