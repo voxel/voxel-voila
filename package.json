@@ -1,7 +1,7 @@
 {
   "name": "voxel-voila",
   "description": "show name of block highlighted at cursor (voxel.js plugin)",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "main": "voila.coffee",
   "repository": {
     "type": "git",
