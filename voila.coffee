@@ -40,8 +40,9 @@ text-align: center;
     container.appendChild @node
     document.body.appendChild container
 
-  update: (pos) ->
+  update: (pos, hit) ->
     @lastPos = pos
+    @lastHit = hit
     if not @lastPos?
       @clear()
       return
@@ -63,8 +64,12 @@ text-align: center;
         '',
         "Name: #{name}",
         "Index: #{index}",
-        "Position: (#{x}, #{y}, #{z})",
+        "Position: (#{x}, #{y}, #{z})"
       ]
+
+      if hit?.normal?
+        [nx, ny, nz] = hit?.normal
+        lines.push "Normal: (#{nx}, #{ny}, #{nz})"
 
       props = @registry.getBlockProps(name)
       if props.requiredTool
@@ -90,8 +95,8 @@ text-align: center;
   enable: () ->
     @node.style.visibility = ''
 
-    @hl.on 'highlight', @onHighlight = (pos) =>
-      @update(pos)
+    @hl.on 'highlight', @onHighlight = (pos, hit) =>
+      @update(pos, hit)
 
     @hl.on 'remove', @onRemove = () =>
       @clear()
@@ -99,7 +104,7 @@ text-align: center;
     if @keys?
       @keys.changed.on 'crouch', @onChanged = () =>
         process.nextTick () =>
-          @update(@lastPos)
+          @update(@lastPos, @lastHit)
 
 
   disable: () ->
