@@ -1,115 +1,142 @@
+'use strict';
 
-module.exports = (game, opts) -> new VoilaPlugin(game, opts)
+module.exports = (game, opts) => new VoilaPlugin(game, opts);
 
-module.exports.pluginInfo =
-  loadAfter: ['voxel-highlight', 'voxel-outline', 'voxel-registry', 'voxel-registry', 'voxel-blockdata', 'voxel-keys']
-  clientOnly: true
+module.exports.pluginInfo = {
+  loadAfter: ['voxel-highlight', 'voxel-outline', 'voxel-registry', 'voxel-registry', 'voxel-blockdata', 'voxel-keys'],
+  clientOnly: true,
+};
 
-class VoilaPlugin
-  constructor: (@game, opts) ->
-    @hl = @game.plugins?.get('voxel-highlight') ? @game.plugins?.get('voxel-outline') ? throw new Error('voxel-voila requires voxel-highlight or voxel-outline plugins')
-    @registry = @game.plugins?.get('voxel-registry') ? throw new Error('voxel-voila requires voxel-registry plugin')
-    throw new Error('voxel-voila requires voxel-registry >=0.2.0 with getItemDisplayName') if not @registry.getItemDisplayName?
-    @blockdata = @game.plugins?.get('voxel-blockdata')
-    @keys = @game.plugins?.get('voxel-keys') # optional
+class VoilaPlugin {
+  constructor(game, opts) {
+    this.game = game;
+    this.hl = game.plugins.get('voxel-highlight');
+    if (!this.hl) this.hl = game.plugins.get('voxel-outline');
+    if (!this.hl) throw new Error('voxel-voila requires voxel-highlight or voxel-outline plugins');
 
-    @createNode()
+    this.registry = game.plugins.get('voxel-registry');
+    if (!this.registry) throw new Error('voxel-voila requires voxel-registry plugin');
 
-    @enable()
+    if (this.registry.getItemDisplayName === undefined) throw new Error('voxel-voila requires voxel-registry >=0.2.0 with getItemDisplayName');
 
-  createNode: () ->
-    @node = document.createElement 'span'
-    @node.setAttribute 'id', 'voxel-voila'
-    @node.setAttribute 'style', '
+    this.blockdata = game.plugins.get('voxel-blockdata');
+
+    this.keys = this.game.plugins.get('voxel-keys'); // optional
+
+    this.createNode();
+
+    this.enable();
+  }
+
+  createNode() {
+    this.node = document.createElement('span');
+    this.node.setAttribute('id', 'voxel-voila');
+    this.node.setAttribute('style', `
 background-image: linear-gradient(rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.6) 100%);
 visibility: hidden;
 color: white;
 font-size: 18pt;
-'
+`);
 
-    @node.textContent = ''
+    this.node.textContent = '';
 
-    container = document.createElement 'div'
-    container.setAttribute 'style', '
+    const container = document.createElement('div');
+    container.setAttribute('style', `
 position: absolute;
 top: 0px;
 width: 100%;
 text-align: center;
-'
+`);
 
-    container.appendChild @node
-    document.body.appendChild container
+    container.appendChild(this.node);
+    document.body.appendChild(container);
+  }
 
-  update: (pos, hit) ->
-    @lastPos = pos
-    @lastHit = hit
-    if not @lastPos?
-      @clear()
-      return
+  update(pos, hit) {
+    this.lastPos = pos;
+    this.lastHit = hit;
+    if (this.lastPos === undefined) {
+      this.clear();
+      return;
+    }
 
-    index = @game.getBlock(pos)
-    name = @registry.getBlockName(index)
+    const index = this.game.getBlock(pos);
+    const name = this.registry.getBlockName(index);
 
-    displayName = @registry.getItemDisplayName(name)
+    const displayName = this.registry.getItemDisplayName(name);
 
-    if @game.buttons.crouch # TODO: voxel-keys state?
-      # more detailed info when crouching
+    if (this.game.buttons.crouch) { // TODO: voxel-keys state?
+      //  more detailed info when crouching
 
-      @node.textContent = ""
+      this.node.textContent = "";
 
-      [x, y, z] = pos
+      const [x, y, z] = pos;
 
-      lines = [
+      const lines = [
         displayName,
         '',
-        "Name: #{name}",
-        "Index: #{index}",
-        "Position: (#{x}, #{y}, #{z})"
-      ]
+        `Name: ${name}`,
+        `Index: ${index}`,
+        `Position: (${x}, ${y}, ${z})`,
+      ];
 
-      if hit?.normal?
-        [nx, ny, nz] = hit?.normal
-        lines.push "Normal: (#{nx}, #{ny}, #{nz})"
+      if (hit !== undefined && hit.normal !== undefined) {
+        const [nx, ny, nz] = hit.normal;
+        lines.push(`Normal: (${nx}, ${ny}, ${nz})`);
+      }
 
-      props = @registry.getBlockProps(name)
-      if props.requiredTool
-        lines.push "Requires: #{props.requiredTool}"
+      const props = this.registry.getBlockProps(name);
+      if (props.requiredTool) {
+        lines.push(`Requires: ${props.requiredTool}`);
+      }
 
-      if @blockdata?
-        # optional attached arbitrary block data
-        bd = @blockdata.get(x, y, z)
-        if bd?
-          # TODO: show this somewhere
-          lines.push "Data: #{JSON.stringify(bd)}"
+      if (this.blockdata !== undefined) {
+        //  optional attached arbitrary block data
+        const bd = this.blockdata.get(x, y, z);
+        if (bd !== undefined) {
+          //  TODO: show this somewhere
+          lines.push(`Data: ${JSON.stringify(bd)}`);
+        }
+      }
 
-      for line in lines
-        @node.appendChild(document.createTextNode(line))
-        @node.appendChild(document.createElement('br'))
-    else
-      @node.textContent = displayName
+      for (let line of lines) {
+        this.node.appendChild(document.createTextNode(line));
+        this.node.appendChild(document.createElement('br'));
+      }
+    } else {
+      this.node.textContent = displayName;
+    }
+  }
 
-  clear: () ->
-    @lastPos = undefined
-    @node.textContent = ''
+  clear() {
+    this.lastPos = undefined;
+    this.node.textContent = '';
+  }
 
-  enable: () ->
-    @node.style.visibility = ''
+  enable() {
+    this.node.style.visibility = '';
 
-    @hl.on 'highlight', @onHighlight = (pos, hit) =>
-      @update(pos, hit)
+    this.hl.on('highlight', this.onHighlight = (pos, hit) => {
+      this.update(pos, hit);
+    });
 
-    @hl.on 'remove', @onRemove = () =>
-      @clear()
+    this.hl.on('remove', this.onRemove = () => {
+      this.clear();
+    });
 
-    if @keys?
-      @keys.changed.on 'crouch', @onChanged = () =>
-        process.nextTick () =>
-          @update(@lastPos, @lastHit)
+    if (this.keys) {
+      this.keys.changed.on('crouch', this.onChanged = () => {
+        process.nextTick(() => {
+          this.update(this.lastPos, this.lastHit);
+        });
+      });
+    }
+  }
 
-
-  disable: () ->
-    @hl.removeListener 'highlight', @onHighlight
-    @hl.removeListener 'remove', @onRemove
-    @keys.changed.removeListener 'crouch', @onChanged if @keys?
-    @node.style.visibility = 'hidden'
-
+  disable() {
+    this.hl.removeListener('highlight', this.onHighlight);
+    this.hl.removeListener('remove', this.onRemove);
+    if (this.keys) this.keys.changed.removeListener('crouch', this.onChanged);
+    this.node.style.visibility = 'hidden';
+  }
+}
